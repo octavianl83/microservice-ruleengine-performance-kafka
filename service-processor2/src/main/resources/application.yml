@@ -1,0 +1,70 @@
+---
+spring:
+  config:
+    activate:
+      on-profile: "local"
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092, localhost:9093, localhost:9094
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: service-listener-group2
+    producer:
+      bootstrap-servers: localhost:9092, localhost:9093, localhost:9094
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+  jpa:
+    database: h2
+    database-platform: org.hibernate.dialect.H2Dialect
+    generate-ddl: true
+  h2:
+    console:
+      enabled: true
+---
+spring:
+  config:
+    activate:
+      on-profile: "dev"
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092, localhost:9093, localhost:9094
+      key-deserializer: org.apache.kafka.common.serialization.IntegerDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: service-listener-group2
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092, localhost:9093, localhost:9094
+      key-deserializer: org.apache.kafka.common.serialization.IntegerDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: service-listener-group2
+
+---
+
+spring:
+  application:
+    name: service-processor2
+  profiles:
+    active: "local"
+
+server:
+  port: 7300
+
+topics:
+  send: "serviceprocessor3"
+  listen: "serviceprocessor2"
+  listen-reply: "serviceprocessor2-reply"
+  reply: "serviceprocessor1-reply"
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8671/eureka
